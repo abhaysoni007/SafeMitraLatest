@@ -189,7 +189,7 @@ const AddGuardianScreen = ({ navigation }) => {
             </Text>
             <TouchableOpacity style={styles.continueAppButton} onPress={() => {
               setShowSuccessModal(false);
-              navigation.navigate('LowBatteryConfig');
+              navigation.navigate('SecretCodeSetup');
             }}>
               <Text style={styles.continueAppButtonText}>Continue</Text>
             </TouchableOpacity>

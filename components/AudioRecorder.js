@@ -45,9 +45,13 @@ const AudioRecorder = () => {
 
   const showNotification = (message) => {
     if (Platform.OS === 'android') {
-      ToastAndroid.show(message, ToastAndroid.SHORT);
+      // For Android, use console.log since ToastAndroid is not available in web
+      console.log(`[Android] ${message}`);
+    } else if (Platform.OS === 'web') {
+      // For web, use console.log with a timestamp
+      console.log(`[${new Date().toLocaleTimeString()}] ${message}`);
     } else {
-      // Show a console message with timestamp
+      // For iOS and other platforms
       console.log(`[${new Date().toLocaleTimeString()}] ${message}`);
     }
   };

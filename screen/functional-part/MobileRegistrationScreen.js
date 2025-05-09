@@ -205,7 +205,7 @@ const MobileRegistrationScreen = ({ navigation }) => {
     // }
 
     // Temporary navigation for development
-    navigation.navigate('VoiceTraining');
+    navigation.navigate('AddGuardian');
   };
 
   return (

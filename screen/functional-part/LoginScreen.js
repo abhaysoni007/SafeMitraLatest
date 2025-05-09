@@ -145,7 +145,7 @@ const LoginScreen = ({ navigation }) => {
     // }
 
     // Temporary navigation for development
-    navigation.navigate('VoiceTraining');
+    navigation.navigate('Dashboard');
   };
 
   // TODO: Add function to handle forgot PIN

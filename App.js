@@ -5,9 +5,7 @@ import AudioRecorder from './components/AudioRecorder';
 import SplashScreen from './screen/functional-part/SplashScreens';
 import MobileRegistrationScreen from './screen/functional-part/MobileRegistrationScreen';
 import LoginScreen from './screen/functional-part/LoginScreen';
-import VoiceTrainingScreen from './screen/functional-part/VoiceTrainingScreen';
 import AddGuardianScreen from './screen/functional-part/AddGuardianScreen';
-import LowBatteryConfigScreen from './screen/functional-part/LowBatteryConfigScreen';
 import SecretCodeSetupScreen from './screen/functional-part/SecretCodeSetupScreen';
 import SafeMitraReadyScreen from './screen/functional-part/SafeMitraReadyScreen';
 import DashboardScreen from './screen/functional-part/DashboardScreen';
@@ -37,9 +35,7 @@ export default function App() {
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="MobileRegistration" component={MobileRegistrationScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="VoiceTraining" component={VoiceTrainingScreen} />
         <Stack.Screen name="AddGuardian" component={AddGuardianScreen} />
-        <Stack.Screen name="LowBatteryConfig" component={LowBatteryConfigScreen} />
         <Stack.Screen name="SecretCodeSetup" component={SecretCodeSetupScreen} />
         <Stack.Screen name="SafeMitraReady" component={SafeMitraReadyScreen} />
         <Stack.Screen name="Dashboard" component={DashboardScreen} />

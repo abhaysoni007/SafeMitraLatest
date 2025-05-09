@@ -9,6 +9,7 @@ const voiceRecordingService = {
     try {
       // Stop any existing recording first
       if (recording) {
+        console.log('Stopping existing recording before starting a new one.');
         await recording.stopAndUnloadAsync();
         recording = null;
       }
@@ -39,7 +40,10 @@ const voiceRecordingService = {
 
   stopAndSaveRecording: async () => {
     try {
-      if (!recording) return null;
+      if (!recording) {
+        console.log('No active recording to stop.');
+        return null;
+      }
 
       await recording.stopAndUnloadAsync();
       const uri = recording.getURI();

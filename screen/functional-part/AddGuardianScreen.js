@@ -60,10 +60,10 @@ const AddGuardianScreen = ({ navigation }) => {
   const handlePhoneNumberChange = (id, text) => {
     // Remove any non-digit characters
     const cleanNumber = text.replace(/[^0-9]/g, '');
-    
+
     // Only take first 10 digits
     const truncatedNumber = cleanNumber.slice(0, 10);
-    
+
     handleGuardianChange(id, 'phone', truncatedNumber);
   };
 
@@ -86,7 +86,7 @@ const AddGuardianScreen = ({ navigation }) => {
 
   const validateAndSave = async () => {
     const filledGuardians = guardians.filter(g => g.name && g.phone && g.relation);
-    
+
     if (filledGuardians.length < 3) {
       Alert.alert('Incomplete Details', 'Please add at least 3 guardians with complete details.');
       return;
@@ -142,7 +142,11 @@ const AddGuardianScreen = ({ navigation }) => {
           style={styles.input}
           placeholder="e.g. Anjali Sharma"
           value={guardian.name}
-          onChangeText={(text) => handleGuardianChange(guardian.id, 'name', text)}
+          onChangeText={(text) => {
+            if (/^[a-zA-Z ]*$/.test(text)) {
+              handleGuardianChange(guardian.id, 'name', text);
+            }
+          }}
         />
       </View>
 
@@ -155,7 +159,11 @@ const AddGuardianScreen = ({ navigation }) => {
             placeholder="Enter 10 digit mobile number"
             keyboardType="number-pad"
             value={guardian.phone}
-            onChangeText={(text) => handlePhoneNumberChange(guardian.id, text)}
+            onChangeText={(text) => {
+              if (/^\d*$/.test(text)) {
+                handlePhoneNumberChange(guardian.id, text);
+              }
+            }}
             maxLength={10}
           />
         </View>
@@ -167,7 +175,11 @@ const AddGuardianScreen = ({ navigation }) => {
           style={styles.input}
           placeholder="e.g. Sister / Father / Friend"
           value={guardian.relation}
-          onChangeText={(text) => handleGuardianChange(guardian.id, 'relation', text)}
+          onChangeText={(text) => {
+            if (/^[a-zA-Z ]*$/.test(text)) {
+              handleGuardianChange(guardian.id, 'relation', text);
+            }
+          }}
         />
       </View>
     </View>
@@ -250,4 +262,4 @@ const AddGuardianScreen = ({ navigation }) => {
   );
 };
 
-export default AddGuardianScreen; 
+export default AddGuardianScreen;

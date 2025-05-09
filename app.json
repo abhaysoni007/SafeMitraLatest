@@ -5,6 +5,16 @@
     "android": {
       "package": "com.safemitra.app",  
       "googleServicesFile": "google-services.json"
-    }
+    },
+    "plugins": [
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow SafeMitra to access your microphone for emergency voice detection."
+        }
+      ]
+    ]
   }
 }
+
+

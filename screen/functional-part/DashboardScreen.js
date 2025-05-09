@@ -17,13 +17,13 @@ import styles from '../styles-part/DashboardScreenStyles';
 
 const DashboardScreen = () => {
   const navigation = useNavigation();
-  
+
   // TODO: Add loading state for API calls
   // const [isLoading, setIsLoading] = useState(false);
-  
+
   // TODO: Add error state for API error handling
   // const [error, setError] = useState(null);
-  
+
   // TODO: Add state for user status and last update time
   // const [userStatus, setUserStatus] = useState({
   //   isSafe: true,
@@ -120,8 +120,8 @@ const DashboardScreen = () => {
           {/* Card Grid */}
           <View style={styles.cardGrid}>
             {/* Live Location Card */}
-            <TouchableOpacity 
-              style={styles.card} 
+            <TouchableOpacity
+              style={styles.card}
               onPress={() => navigation.navigate('LiveLocationStatus')}
             >
               <Ionicons name="location" size={32} color="#FFFFFF" />
@@ -129,8 +129,8 @@ const DashboardScreen = () => {
             </TouchableOpacity>
 
             {/* Hotword Detection Card */}
-            <TouchableOpacity 
-              style={styles.card} 
+            <TouchableOpacity
+              style={styles.card}
               onPress={() => navigation.navigate('HotwordDetection')}
             >
               <Ionicons name="mic" size={32} color="#FFFFFF" />
@@ -138,8 +138,8 @@ const DashboardScreen = () => {
             </TouchableOpacity>
 
             {/* Emergency SOS Card */}
-            <TouchableOpacity 
-              style={styles.card} 
+            <TouchableOpacity
+              style={styles.card}
               onPress={() => navigation.navigate('EmergencySOS')}
             >
               <Ionicons name="alert-circle" size={32} color="#FFFFFF" />
@@ -147,8 +147,8 @@ const DashboardScreen = () => {
             </TouchableOpacity>
 
             {/* Auto Alert Card */}
-            <TouchableOpacity 
-              style={styles.card} 
+            <TouchableOpacity
+              style={styles.card}
               onPress={() => navigation.navigate('AutoAlertActive')}
             >
               <Ionicons name="people" size={32} color="#FFFFFF" />
@@ -156,7 +156,7 @@ const DashboardScreen = () => {
             </TouchableOpacity>
 
             {/* Secure Voice & Location Card */}
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.card}
               onPress={() => navigation.navigate('EvidenceSecure')}
             >
@@ -165,7 +165,7 @@ const DashboardScreen = () => {
             </TouchableOpacity>
 
             {/* Guardian Alert Card */}
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.card}
               onPress={() => navigation.navigate('GuardianAlertSent')}
             >
@@ -178,18 +178,24 @@ const DashboardScreen = () => {
 
       {/* Footer Navigation */}
       <View style={styles.footer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.footerIcon}
           onPress={() => navigation.navigate('Splash')}
         >
           <Ionicons name="home" size={24} color="#FF3B30" />
           <Text style={styles.footerText}>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerIcon}>
+        <TouchableOpacity
+          style={styles.footerIcon}
+          onPress={() => navigation.navigate('Settings')}
+        >
           <Ionicons name="settings" size={24} color="#666666" />
           <Text style={styles.footerText}>Settings</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerIcon}>
+        <TouchableOpacity
+          style={styles.footerIcon}
+          onPress={() => navigation.navigate('Profile')}
+        >
           <Ionicons name="person" size={24} color="#666666" />
           <Text style={styles.footerText}>Profile</Text>
         </TouchableOpacity>

@@ -17,12 +17,15 @@ import EvidenceSecureScreen from './screen/functional-part/EvidenceSecureScreen'
 import GuardianAlertSentScreen from './screen/functional-part/GuardianAlertSentScreen';
 import EmergencyEvidenceScreen from './screen/functional-part/EmergencyEvidenceScreen';
 import GuardianAlertReceivedScreen from './screen/functional-part/GuardianAlertReceivedScreen';
+import SettingsScreen from './screen/functional-part/SettingScreen';
+import ProfileScreen from './screen/functional-part/ProfileScreen';
+
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   console.log('App component rendered');
-  
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -39,58 +42,72 @@ export default function App() {
         <Stack.Screen name="SecretCodeSetup" component={SecretCodeSetupScreen} />
         <Stack.Screen name="SafeMitraReady" component={SafeMitraReadyScreen} />
         <Stack.Screen name="Dashboard" component={DashboardScreen} />
-        <Stack.Screen 
-          name="LiveLocationStatus" 
+        <Stack.Screen
+          name="LiveLocationStatus"
           component={LiveLocationStatusScreen}
           options={{
             headerShown: false
           }}
         />
-        <Stack.Screen 
-          name="HotwordDetection" 
+        <Stack.Screen
+          name="HotwordDetection"
           component={HotwordDetectionScreen}
           options={{
             headerShown: false
           }}
         />
-        <Stack.Screen 
-          name="EmergencySOS" 
+        <Stack.Screen
+          name="EmergencySOS"
           component={EmergencySOSScreen}
           options={{
             headerShown: false
           }}
         />
-        <Stack.Screen 
-          name="AutoAlertActive" 
+        <Stack.Screen
+          name="AutoAlertActive"
           component={AutoAlertActiveScreen}
           options={{
             headerShown: false
           }}
         />
-        <Stack.Screen 
-          name="EvidenceSecure" 
+        <Stack.Screen
+          name="EvidenceSecure"
           component={EvidenceSecureScreen}
           options={{
             headerShown: false
           }}
         />
-        <Stack.Screen 
-          name="EmergencyEvidence" 
+        <Stack.Screen
+          name="EmergencyEvidence"
           component={EmergencyEvidenceScreen}
           options={{
             headerShown: false
           }}
         />
-        <Stack.Screen 
-          name="GuardianAlertSent" 
+        <Stack.Screen
+          name="GuardianAlertSent"
           component={GuardianAlertSentScreen}
           options={{
             headerShown: false
           }}
         />
-        <Stack.Screen 
-          name="GuardianAlert" 
+        <Stack.Screen
+          name="GuardianAlert"
           component={GuardianAlertReceivedScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
           options={{
             headerShown: false
           }}
@@ -99,4 +116,4 @@ export default function App() {
       <AudioRecorder />
     </NavigationContainer>
   );
-} 
+}

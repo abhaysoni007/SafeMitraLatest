@@ -164,6 +164,18 @@ const styles = StyleSheet.create({
     color: '#666666',
     lineHeight: 20,
   },
+  button: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  }
 });
 
-export default styles; 
+export default styles;

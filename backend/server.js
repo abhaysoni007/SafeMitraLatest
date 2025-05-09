@@ -17,7 +17,7 @@ app.use(cors({
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)){
+if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
 
@@ -42,11 +42,7 @@ app.use((req, res, next) => {
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
-  });
+  res.status(200).send('Server is healthy');
 });
 
 // Home page
@@ -180,8 +176,8 @@ Field name: 'audio'</pre>
         </div>
         
         <h2>Received Files (${fileList.length}):</h2>
-        ${fileList.length > 0 
-          ? `<table>
+        ${fileList.length > 0
+      ? `<table>
               <tr>
                 <th>Filename</th>
                 <th>Size</th>
@@ -222,8 +218,8 @@ Field name: 'audio'</pre>
                 });
               }
             </script>`
-          : '<p class="no-files">No audio files received yet. Check that your app is properly connected.</p>'
-        }
+      : '<p class="no-files">No audio files received yet. Check that your app is properly connected.</p>'
+    }
 
         <h2>Troubleshooting:</h2>
         <ul>
@@ -245,11 +241,11 @@ app.post('/upload-audio', upload.single('audio'), (req, res) => {
     console.log('Error: No file uploaded');
     return res.status(400).json({ error: 'No file uploaded' });
   }
-  
+
   console.log(`File received: ${req.file.filename}, size: ${req.file.size} bytes`);
-  res.json({ 
+  res.json({
     success: true,
-    message: 'Audio received successfully', 
+    message: 'Audio received successfully',
     filename: req.file.filename,
     size: req.file.size,
     timestamp: new Date().toISOString()
@@ -260,18 +256,26 @@ app.post('/upload-audio', upload.single('audio'), (req, res) => {
 app.get('/audio/:filename', (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(uploadsDir, filename);
-  
+
   if (!fs.existsSync(filePath)) {
     return res.status(404).json({ error: 'Audio file not found' });
   }
-  
+
   // More specific MIME type for M4A files
   res.setHeader('Content-Type', 'audio/mp4');
   res.setHeader('Accept-Ranges', 'bytes');
   res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-  
+
   // Send the file directly instead of streaming
   res.sendFile(filePath);
+});
+
+// Add a test endpoint to send a sample response
+app.get('/api/test', (req, res) => {
+  res.json({
+    message: 'Hello from the backend!',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Handle 404
@@ -296,4 +300,4 @@ Health check: http://localhost:${PORT}/health
 Files stored in: ${uploadsDir}
 ==============================================
   `);
-}); 
+});

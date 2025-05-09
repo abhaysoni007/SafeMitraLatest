@@ -4,132 +4,177 @@ import {
   Text,
   TouchableOpacity,
   SafeAreaView,
-  Image,
-  Platform,
   ActivityIndicator,
+  ScrollView,
+  Modal,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import SafeMitraLogo from '../../components/SafeMitraLogo';
 import styles from '../styles-part/AutoAlertActiveScreenStyles';
-
-// TODO: Import API service for emergency operations
-// import { emergencyService } from '../../services/emergencyService';
+import { emergencyService } from '../../services/emergency';
+import voiceRecordingService from '../../services/voiceRecordingService';
 
 const AutoAlertActiveScreen = () => {
   const navigation = useNavigation();
   const [timeLeft, setTimeLeft] = useState(10); // 10 seconds countdown
   const [isEmergency, setIsEmergency] = useState(false);
-  
-  // TODO: Add loading state for API calls
-  // const [isLoading, setIsLoading] = useState(false);
-  
-  // TODO: Add error state for API error handling
-  // const [error, setError] = useState(null);
-  
-  // TODO: Add state for tracking emergency actions
-  // This state will track the status of various emergency actions taken during an auto-triggered emergency
-  // It will be updated as each action is completed successfully
-  // The data structure includes:
-  // - locationSent: Boolean indicating if the user's location has been sent to guardians
-  // - policeCalled: Boolean indicating if police has been notified
-  // - ngoCalled: Boolean indicating if NGO has been notified
-  // - evidenceSaved: Boolean indicating if evidence (voice, location) has been saved to blockchain
-  // This data will be used to update the UI to show which actions have been completed
-  // and to provide visual feedback to the user about the progress of emergency actions
-  // const [emergencyActions, setEmergencyActions] = useState({
-  //   locationSent: false,
-  //   policeCalled: false,
-  //   ngoCalled: false,
-  //   evidenceSaved: false
-  // });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingStatus, setRecordingStatus] = useState('');
+  const [recordingTimeLeft, setRecordingTimeLeft] = useState(60); // 1 minute recording
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // Temporary state for development - will be replaced with emergencyActions when implemented
-  const [actionsCompleted, setActionsCompleted] = useState(false);
+  const [emergencyActions, setEmergencyActions] = useState({
+    locationSent: false,
+    policeCalled: false,
+    ngoCalled: false,
+    evidenceSaved: false,
+  });
 
   useEffect(() => {
-    // TODO: Add API call to initiate emergency protocol
-    // This function will be called when the component mounts
-    // It will initiate the emergency protocol and start the countdown
-    // const initiateEmergencyProtocol = async () => {
-    //   try {
-    //     setIsLoading(true);
-    //     const response = await emergencyService.initiateEmergency();
-    //     // Handle response
-    //   } catch (err) {
-    //     setError('Failed to initiate emergency protocol');
-    //     console.error(err);
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    // };
-    // 
-    // initiateEmergencyProtocol();
+    const initiateEmergencyProtocol = async () => {
+      try {
+        setIsLoading(true);
+        await emergencyService.initiateEmergency();
 
-    const timer = setInterval(() => {
+        // Start recording when emergency is initiated
+        const recordingStarted = await voiceRecordingService.startRecording();
+        if (recordingStarted) {
+          setIsRecording(true);
+          setRecordingStatus('Recording started');
+        }
+      } catch (err) {
+        setError('Failed to initiate emergency protocol');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initiateEmergencyProtocol();
+
+    // Timer for alert countdown
+    const alertTimer = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
-          clearInterval(timer);
-          setIsEmergency(true);
-          // Set actions as completed when timer reaches zero (for development)
-          setActionsCompleted(true);
-          
-          // TODO: Add API call to confirm emergency when timer expires
-          // This function will be called when the countdown reaches zero
-          // It will confirm the emergency and start the emergency actions
-          // const confirmEmergency = async () => {
-          //   try {
-          //     setIsLoading(true);
-          //     await emergencyService.confirmEmergency();
-          //     // Update emergency actions status
-          //     setEmergencyActions(prev => ({
-          //       ...prev,
-          //       locationSent: true,
-          //       policeCalled: true,
-          //       ngoCalled: true,
-          //       evidenceSaved: true
-          //     }));
-          //   } catch (err) {
-          //     setError('Failed to confirm emergency');
-          //     console.error(err);
-          //   } finally {
-          //     setIsLoading(false);
-          //   }
-          // };
-          // 
-          // confirmEmergency();
-          
+          clearInterval(alertTimer);
+          handleEmergencyTrigger();
           return 0;
         }
         return prevTime - 1;
       });
     }, 1000);
 
-    return () => clearInterval(timer);
+    // Timer for recording duration
+    const recordingTimer = setInterval(() => {
+      setRecordingTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(recordingTimer);
+          handleStopRecording();
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(alertTimer);
+      clearInterval(recordingTimer);
+      // Stop recording if component unmounts
+      if (isRecording) {
+        handleStopRecording();
+      }
+    };
   }, []);
 
-  const formatTime = (seconds) => {
-    return `${seconds}`;
+  const handleStopRecording = async () => {
+    if (isRecording) {
+      const recordingPath = await voiceRecordingService.stopAndSaveRecording();
+      if (recordingPath) {
+        setRecordingStatus('Recording saved');
+        // Upload the recording
+        const uploadSuccess = await voiceRecordingService.uploadRecording(recordingPath);
+        if (uploadSuccess) {
+          setRecordingStatus('Recording uploaded');
+          setShowSuccessModal(true); // Show success modal
+        } else {
+          setRecordingStatus('Upload failed');
+        }
+      }
+      setIsRecording(false);
+    }
   };
 
-  // TODO: Add function to cancel emergency
-  // This function will be called when the user presses the Cancel Alert button
-  // It will cancel the emergency and stop all emergency actions
-  // const cancelEmergency = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     await emergencyService.cancelEmergency();
-  //     navigation.goBack();
-  //   } catch (err) {
-  //     setError('Failed to cancel emergency');
-  //     console.error(err);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const handleEmergencyTrigger = async () => {
+    setIsEmergency(true);
+    try {
+      setIsLoading(true);
+      await emergencyService.confirmEmergency();
+
+      // Simulate each action delay (optional: add loading per action if needed)
+      setEmergencyActions({
+        locationSent: true,
+        policeCalled: true,
+        ngoCalled: true,
+        evidenceSaved: true,
+      });
+    } catch (err) {
+      setError('Failed to confirm emergency');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const cancelEmergency = async () => {
+    try {
+      setIsLoading(true);
+      // Stop recording if it's still active
+      if (isRecording) {
+        await handleStopRecording();
+      }
+      await emergencyService.cancelEmergency();
+      navigation.goBack();
+    } catch (err) {
+      setError('Failed to cancel emergency');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formatTime = (seconds) => `${seconds}`;
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Success Modal */}
+      <Modal
+        visible={showSuccessModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowSuccessModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalIconContainer}>
+              <Ionicons name="checkmark-circle" size={60} color="#4CAF50" />
+            </View>
+            <Text style={styles.modalTitle}>Recording Complete!</Text>
+            <Text style={styles.modalMessage}>
+              Your emergency recording has been successfully saved and uploaded.
+            </Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setShowSuccessModal(false)}
+            >
+              <Text style={styles.modalButtonText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -143,90 +188,90 @@ const AutoAlertActiveScreen = () => {
         </View>
       </View>
 
-      <View style={styles.content}>
+      <ScrollView contentContainerStyle={styles.content}>
         {/* Alert Header */}
         <View style={styles.alertHeader}>
           <View style={styles.alertIconContainer}>
             <Ionicons name="alert-circle" size={40} color="#FF3B30" />
           </View>
-          <Text style={styles.alertTitle}>
-            Auto Alert Triggered
-          </Text>
+          <Text style={styles.alertTitle}>Auto Alert Triggered</Text>
           <Text style={styles.alertMessage}>
             We detected a trained hotword and triggered emergency actions. If this was accidental, you can cancel it within {timeLeft} seconds.
           </Text>
         </View>
 
-        {/* Loading Indicator */}
-        {/* TODO: Add loading indicator when API calls are in progress */}
-        {/* {isLoading && <ActivityIndicator size="large" color="#FF3B30" style={styles.loadingIndicator} />} */}
+        {isLoading && <ActivityIndicator size="large" color="#FF3B30" style={styles.loadingIndicator} />}
+        {error && <Text style={styles.errorText}>{error}</Text>}
 
-        {/* Error Message */}
-        {/* TODO: Add error message display */}
-        {/* {error && <Text style={styles.errorText}>{error}</Text> */}
+        {/* Recording Status */}
+        {isRecording && (
+          <View style={styles.recordingStatus}>
+            <Ionicons name="mic" size={24} color="#FF3B30" />
+            <Text style={styles.recordingStatusText}>
+              {recordingStatus} ({recordingTimeLeft}s remaining)
+            </Text>
+          </View>
+        )}
 
         {/* Timer */}
         <View style={styles.timerContainer}>
           <View style={styles.timerCircle}>
-            <Text style={styles.timerText}>
-              {formatTime(timeLeft)}
-            </Text>
+            <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
           </View>
         </View>
 
         {/* Cancel Button */}
         {!isEmergency && (
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={() => navigation.goBack()}>
-            <Text style={styles.cancelButtonText}>
-              Cancel Alert
-            </Text>
+          <TouchableOpacity style={styles.cancelButton} onPress={cancelEmergency}>
+            <Text style={styles.cancelButtonText}>Cancel Alert</Text>
           </TouchableOpacity>
         )}
 
         {/* Status Section */}
-        <View style={styles.statusSection}>
-          <Text style={styles.statusTitle}>
-            Status Updates
-          </Text>
-          <View style={styles.statusItem}>
-            <Ionicons
-              name={actionsCompleted ? "checkmark-circle" : "time"}
-              size={24}
-              color={actionsCompleted ? "#4CAF50" : "#FFA000"}
-              style={styles.statusIcon}
-            />
-            <Text style={styles.statusText}>
-              Location sent to Guardians
-            </Text>
+        {isEmergency && (
+          <View style={styles.statusSection}>
+            <Text style={styles.statusTitle}>Status Updates</Text>
+
+            <View style={styles.statusItem}>
+              <Ionicons
+                name={emergencyActions.locationSent ? 'checkmark-circle' : 'time'}
+                size={24}
+                color={emergencyActions.locationSent ? 'green' : '#FF9500'}
+              />
+              <Text style={styles.statusText}>Location sent to guardians</Text>
+            </View>
+
+            <View style={styles.statusItem}>
+              <Ionicons
+                name={emergencyActions.policeCalled ? 'checkmark-circle' : 'time'}
+                size={24}
+                color={emergencyActions.policeCalled ? 'green' : '#FF9500'}
+              />
+              <Text style={styles.statusText}>Police notified</Text>
+            </View>
+
+            <View style={styles.statusItem}>
+              <Ionicons
+                name={emergencyActions.ngoCalled ? 'checkmark-circle' : 'time'}
+                size={24}
+                color={emergencyActions.ngoCalled ? 'green' : '#FF9500'}
+              />
+              <Text style={styles.statusText}>NGO notified</Text>
+            </View>
+
+            <View style={styles.statusItem}>
+              <Ionicons
+                name={emergencyActions.evidenceSaved ? 'checkmark-circle' : 'time'}
+                size={24}
+                color={emergencyActions.evidenceSaved ? 'green' : '#FF9500'}
+              />
+              <Text style={styles.statusText}>Evidence saved to blockchain</Text>
+            </View>
           </View>
-          <View style={styles.statusItem}>
-            <Ionicons
-              name={actionsCompleted ? "checkmark-circle" : "time"}
-              size={24}
-              color={actionsCompleted ? "#4CAF50" : "#FFA000"}
-              style={styles.statusIcon}
-            />
-            <Text style={styles.statusText}>
-              Calling Police & NGO
-            </Text>
-          </View>
-          <View style={styles.statusItem}>
-            <Ionicons
-              name={actionsCompleted ? "checkmark-circle" : "time"}
-              size={24}
-              color={actionsCompleted ? "#4CAF50" : "#FFA000"}
-              style={styles.statusIcon}
-            />
-            <Text style={styles.statusText}>
-              Evidence Saved to Blockchain
-            </Text>
-          </View>
-        </View>
-      </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default AutoAlertActiveScreen; 
+export default AutoAlertActiveScreen;

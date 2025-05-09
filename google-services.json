@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "728383136441",
+    "project_id": "safemitra-4d79d",
+    "storage_bucket": "safemitra-4d79d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728383136441:android:3b6537b32fa889d7c33168",
+        "android_client_info": {
+          "package_name": "com.safemitra.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrmoXgxw-iL_v-lkKCXIBM0I2PUMWA_f8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "SafeMitra",
+    "slug": "safemitra-app",
+    "android": {
+      "package": "com.safemitra.app",  
+      "googleServicesFile": "google-services.json"
+    }
+  }
+}
